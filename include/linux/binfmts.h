@@ -150,4 +150,28 @@ extern int do_execveat(int, struct filename *,
 		       int);
 int do_execve_file(struct file *file, void *__argv, void *__envp);
 
+bool init_protection_enabled(void);
+
+static inline bool task_is_booster(struct task_struct *tsk)
+{
+	char comm[sizeof(tsk->comm)];
+
+    if (!init_protection_enabled())
+        return false;
+
+	get_task_comm(comm, tsk);
+	return !strcmp(comm, "init") || !strcmp(comm, "NodeLooperThrea") ||
+			!strcmp(comm, "power@1.2-servi") ||
+			!strcmp(comm, "power@1.3-servi") ||
+			!strcmp(comm, "are.power-servi") ||
+			!strcmp(comm, "perf@1.0-servic") ||
+			!strcmp(comm, "perf@2.0-servic") ||
+			!strcmp(comm, "perf@2.1-servic") ||
+			!strcmp(comm, "perf@2.2-servic") ||
+			!strcmp(comm, "perf2-hal-servi") ||
+			!strcmp(comm, "init.qcom.post_") ||
+			!strcmp(comm, "power@2.0-servic") ||
+			!strcmp(comm, "PERFD-SERVER");
+}
+
 #endif /* _LINUX_BINFMTS_H */
